@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+
+<HBox fx:id="rootNode" alignment="CENTER" prefHeight="400.0" prefWidth="400.0" style="-fx-background-color: linear-gradient(#fff 0%, #eee 10%, #ddd 90%, #bbb 100%);" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CloudWindowController">
+    <VBox>
+        <ListView fx:id="filesList" HBox.hgrow="ALWAYS" />
+           <TextField fx:id="tfFileName" focusTraversable="false" promptText="Укажите имя файла на сервере, который хотите скачать" />
+        <HBox>
+            <Button onAction="#pressUploadKey" text="Upload" />
+            <Button onAction="#pressDellButton" text="Удалить" />
+            <Button onAction="#refreshList" text="Обновить" />
+        </HBox>
+
+    </VBox>
+    <VBox>
+        <ListView fx:id="serfilesList" VBox.Vgrow="ALWAYS" />
+        <HBox>
+            <Button onAction="#pressDownKey" text="Download" />
+            <Button onAction="#pressDellatServerButton" text="Удалить" />
+        </HBox>
+    </VBox>
+</HBox>
+
+<!--<?import javafx.scene.layout.AnchorPane?>-->
+<!--<?import javafx.scene.control.Label?>-->
+<!--<?import javafx.scene.control.PasswordField?>-->
+
+<!--<AnchorPane id="root" maxHeight="-Infinity" maxWidth="-Infinity"-->
+<!--            minHeight="-Infinity" minWidth="-Infinity" prefHeight="750"-->
+<!--            prefWidth="700" xmlns:fx="http://javafx.com/fxml/1"-->
+<!--            xmlns="http://javafx.com/javafx/2.2"-->
+<!--            fx:controller="CloudWindowController">-->
+<!--    <children>-->
+<!--        <Label layoutX="24.0" layoutY="14.0" text="Login:" />-->
+<!--        <Label layoutX="24.0" layoutY="63.0" text="Password:" />-->
+<!--        <TextField fx:id="userTextField" layoutX="24.0" layoutY="30.0" prefWidth="200.0" />-->
+<!--        <PasswordField fx:id="pwBox" layoutX="24.0" layoutY="86.0" prefWidth="200.0" />-->
+
+<!--    </children>-->
+<!--</AnchorPane>-->
