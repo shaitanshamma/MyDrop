@@ -26,6 +26,8 @@ public class CloudWindowController implements Initializable {
 
     String fileName;
 
+    boolean isOk;
+
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
@@ -158,7 +160,11 @@ public class CloudWindowController implements Initializable {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                NettyNetwork.getInstance().start(CloudWindowController.this);
+                try {
+                    NettyNetwork.getInstance().start(CloudWindowController.this, LogOnWindowController.class.newInstance());
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }

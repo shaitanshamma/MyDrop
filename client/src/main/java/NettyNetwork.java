@@ -33,7 +33,7 @@ public class NettyNetwork {
         return currentChannel;
     }
 
-    public void start(CloudWindowController cloudWindowController) {
+    public void start(CloudWindowController cloudWindowController, LogOnWindowController logOnWindowController) {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap clientBootstrap = new Bootstrap();
@@ -43,7 +43,7 @@ public class NettyNetwork {
             clientBootstrap.handler(new ChannelInitializer<SocketChannel>() {
                 protected void initChannel(SocketChannel socketChannel) throws Exception {
                     socketChannel.pipeline().addLast(new ObjectDecoder(50 * 1024 * 1024, ClassResolvers.cacheDisabled(null)),
-                            new ObjectEncoder(), new ClientDownload(cloudWindowController));
+                            new ObjectEncoder(), new ClientDownload(cloudWindowController,logOnWindowController));
                     currentChannel = socketChannel;
 
                 }

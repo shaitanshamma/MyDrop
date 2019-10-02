@@ -9,20 +9,23 @@ import java.nio.file.Paths;
 
 public class ClientDownload extends ChannelInboundHandlerAdapter {
 
-    public static boolean isOk() {
-        return isOk;
-    }
-
-    public static void setIsOk(boolean isOk) {
-        ClientDownload.isOk = isOk;
-    }
-
-    static boolean isOk;
+//    public static boolean isOk() {
+//        return isOk;
+//    }
+//
+//    public static void setIsOk(boolean isOk) {
+//        ClientDownload.isOk = isOk;
+//    }
+//
+//    static boolean isOk;
 
     CloudWindowController controller;
 
+    LogOnWindowController logOnWindowController;
 
-    public ClientDownload(CloudWindowController controller) {
+
+    public ClientDownload(CloudWindowController controller, LogOnWindowController logOnWindowController) {
+        this.logOnWindowController = logOnWindowController;
         this.controller = controller;
     }
 
@@ -44,7 +47,7 @@ public class ClientDownload extends ChannelInboundHandlerAdapter {
                 }
                 }else {
                     Platform.runLater(()->{
-       //                 controller.serfilesList.getItems().clear();
+                        controller.serfilesList.getItems().clear();
                         FileList fl = (FileList) msg;
                         for (String s : fl.getSerfilesList()) {
                             controller.serfilesList.getItems().add(s);
@@ -54,7 +57,15 @@ public class ClientDownload extends ChannelInboundHandlerAdapter {
             } else if (msg instanceof Approve) {
                 Approve ok = (Approve) msg;
                 if (ok.isAuthorizated.equals("ok")) {
-                    setIsOk(true);
+                    if(Platform.isFxApplicationThread()){
+
+                    logOnWindowController.isOk.setText("ok");
+                    }else {
+                        Platform.runLater(()->{
+                    logOnWindowController.isOk.setText("ok");
+
+                        });
+                    }
                 }
             }
         } finally {

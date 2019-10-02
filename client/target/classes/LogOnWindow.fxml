@@ -15,6 +15,7 @@
         <Label layoutX="24.0" layoutY="63.0" text="Password:" />
         <TextField fx:id="userTextField" layoutX="24.0" layoutY="30.0" prefWidth="200.0" />
         <PasswordField fx:id="pwBox" layoutX="24.0" layoutY="86.0" prefWidth="200.0" />
+        <Label fx:id="isOk" />
         <Button layoutX="168.0" layoutY="124.0" mnemonicParsing="false" text="Log In"  onAction="#connect"/>
     </children>
 </AnchorPane>
