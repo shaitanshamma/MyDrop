@@ -98,14 +98,11 @@ public class CloudWindowController implements Initializable {
 
     public void refreshServerFilesList() {
         if (Platform.isFxApplicationThread()) {
-            serfilesList.getItems().clear();
+            // serfilesList.getItems().clear();
             NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "delete"));
-//            for (String s : ClientDownload.serverList) {
-//                serfilesList.getItems().add(s);
-//            }
         } else {
             Platform.runLater(() -> {
-                serfilesList.getItems().clear();
+                //          serfilesList.getItems().clear();
                 NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "delete"));
 
             });
@@ -120,23 +117,40 @@ public class CloudWindowController implements Initializable {
     }
 
     public void pressUploadKey() {
-        try {
-            NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get("client_storage/" + tfFileName.getText())));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (Platform.isFxApplicationThread()) {
+            try {
+                NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get("client_storage/" + tfFileName.getText())));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            refreshServerFilesList();
+            tfFileName.clear();
+        } else {
+            Platform.runLater(() -> {
+                try {
+                    NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get("client_storage/" + tfFileName.getText())));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                refreshServerFilesList();
+                tfFileName.clear();
+            });
         }
-        refreshServerFilesList();
-        tfFileName.clear();
     }
 
     public void pressDellatServerButton(ActionEvent actionEvent) {
-        NettyNetwork.currentChannel.writeAndFlush(new FileRequest(tfFileName.getText(), "delete"));
-        refreshServerFilesList();
-        tfFileName.clear();
-    }
+        if (Platform.isFxApplicationThread()) {
+            NettyNetwork.currentChannel.writeAndFlush(new FileRequest(tfFileName.getText(), "delete"));
+            refreshServerFilesList();
+            tfFileName.clear();
 
-    public void getServerFileList() {
-        NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "delete"));
+        } else {
+            Platform.runLater(() -> {
+                NettyNetwork.currentChannel.writeAndFlush(new FileRequest(tfFileName.getText(), "delete"));
+                refreshServerFilesList();
+                tfFileName.clear();
+            });
+        }
     }
 
     @Override
