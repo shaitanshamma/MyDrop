@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -29,8 +30,11 @@ public class LogOnWindowController implements Initializable {
     @FXML
     Label isOk;
 
+    @FXML
+    Button Button;
 
-    public void connect() throws IOException {
+    @FXML
+    public void connect(ActionEvent actionEvent) throws IOException {
 
         if (Platform.isFxApplicationThread()) {
             NettyNetwork.currentChannel.writeAndFlush(new ClientConnection(userTextField.getText(), pwBox.getText()));
@@ -42,16 +46,19 @@ public class LogOnWindowController implements Initializable {
         }
 
         if (!isOk.getText().isEmpty()) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/CloudWindow.fxml"));
-//            AnchorPane Loader = FXMLLoader.load(getClass().getResource("/CloudWindow"));
-//            root.getChildren().setAll(Loader);
+            Stage stage = (Stage) Button.getScene().getWindow();
+            stage.close();
+            FXMLLoader Loader = new FXMLLoader(getClass().getResource("/CloudWindow.fxml"));
+//            AnchorPane pane = FXMLLoader.load(getClass().getResource("/CloudWindow.fxml"));
             Parent root;
             Stage primaryStage = new Stage();
-            root = fxmlLoader.load();
+            root = Loader.load();
+//            AnchorPane.getChildren().setAll(pane);
             primaryStage.setTitle("Box Client");
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.show();
+
             System.out.println("sdsdsd");
         }
     }

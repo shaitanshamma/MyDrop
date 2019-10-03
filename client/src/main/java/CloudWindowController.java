@@ -33,7 +33,7 @@ public class CloudWindowController implements Initializable {
         this.fileName = fileName;
     }
 
-    public void refreshList(ActionEvent actionEvent) {
+    public void refreshList() {
         selection();
         refreshLocalFilesList();
         refreshServerFilesList();
@@ -100,12 +100,12 @@ public class CloudWindowController implements Initializable {
 
     public void refreshServerFilesList() {
         if (Platform.isFxApplicationThread()) {
-            // serfilesList.getItems().clear();
-            NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "delete"));
+//             serfilesList.getItems().clear();
+            NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "update"));
         } else {
             Platform.runLater(() -> {
-                //          serfilesList.getItems().clear();
-                NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "delete"));
+//                          serfilesList.getItems().clear();
+                NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "update"));
 
             });
         }
@@ -167,6 +167,7 @@ public class CloudWindowController implements Initializable {
                 }
             }
         }).start();
+        selection();
     }
 
 }

@@ -9,15 +9,6 @@ import java.nio.file.Paths;
 
 public class ClientDownload extends ChannelInboundHandlerAdapter {
 
-//    public static boolean isOk() {
-//        return isOk;
-//    }
-//
-//    public static void setIsOk(boolean isOk) {
-//        ClientDownload.isOk = isOk;
-//    }
-//
-//    static boolean isOk;
 
     CloudWindowController controller;
 

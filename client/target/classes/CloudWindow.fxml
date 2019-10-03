@@ -28,9 +28,9 @@
     </VBox>
 </HBox>
 
-<!--<?import javafx.scene.layout.AnchorPane?>-->
-<!--<?import javafx.scene.control.Label?>-->
-<!--<?import javafx.scene.control.PasswordField?>-->
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 
 <!--<AnchorPane id="root" maxHeight="-Infinity" maxWidth="-Infinity"-->
 <!--            minHeight="-Infinity" minWidth="-Infinity" prefHeight="750"-->
