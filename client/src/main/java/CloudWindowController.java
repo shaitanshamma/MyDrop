@@ -100,11 +100,11 @@ public class CloudWindowController implements Initializable {
 
     public void refreshServerFilesList() {
         if (Platform.isFxApplicationThread()) {
-//             serfilesList.getItems().clear();
+             serfilesList.getItems().clear();
             NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "update"));
         } else {
             Platform.runLater(() -> {
-//                          serfilesList.getItems().clear();
+                serfilesList.getItems().clear();
                 NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "update"));
 
             });
