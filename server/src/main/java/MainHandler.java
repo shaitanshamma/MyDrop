@@ -1,6 +1,11 @@
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.ReferenceCountUtil;
+import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,12 +16,17 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
     List<String> serfilesList = new ArrayList<>();
     List<String> path = new ArrayList<>();
     static String currentPath;
-    Map<String, String> pathOn = new HashMap<>();
+    Map<Channel, String> pathOn = new HashMap<>();
+    final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("Client connected...");
+        channels.add(ctx.channel());
+        for (Channel channel : channels) {
+            System.out.println(channel.id());
+        }
     }
 
     @Override
@@ -28,27 +38,30 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
             }
             if (msg instanceof FileRequest) {
                 FileRequest fr = (FileRequest) msg;
-                setCurrentPath(ctx);
+               // setCurrentPath(ctx);
                 if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("down")) {
-                    setCurrentPath(ctx);
+                 //   setCurrentPath(ctx);
                     FileMessage fm = new FileMessage(Paths.get(path + fr.getFilename()));
                     System.out.println(Arrays.toString(fm.getData()));
                     ctx.writeAndFlush(fm);
                 } else if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("delete")) {
-                    setCurrentPath(ctx);
+                  //  setCurrentPath(ctx);
                     Files.delete(Paths.get(currentPath + fr.getFilename()));
                     serfilesList.clear();
                     Files.list(Paths.get(currentPath)).map(p -> p.getFileName().toString()).forEach(o -> serfilesList.add(o));
                     ctx.writeAndFlush(new FileList(serfilesList));
                 } else if (fr.getFilename().equals("list")) {
-                    setCurrentPath(ctx);
-                    System.out.println(pathOn.get(ctx.channel()));
+                    for (Channel channel : channels) {
+                        setCurrentPath(channel.id());
+                    }
+                    //setCurrentPath(ctx);
+                   // System.out.println(pathOn.get(ctx.channel()));
                     serfilesList.clear();
                     Files.list(Paths.get(currentPath)).map(p -> p.getFileName().toString()).forEach(o -> serfilesList.add(o));
                     ctx.writeAndFlush(new FileList(serfilesList));
                 }
             } else if (msg instanceof FileMessage) {
-                setCurrentPath(ctx);
+                //setCurrentPath(ctx);
                 FileMessage fm = (FileMessage) msg;
                 if (!Files.exists(Paths.get(currentPath + fm.getFilename()))) {
                     Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
@@ -58,8 +71,10 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 for (Client client : Server.clientList) {
                     if (cl.getLogin().equals(client.login)) {
                         ctx.writeAndFlush(new Approve("ok"));
-                        pathOn.put(ctx.name(), client.login);
-                        setCurrentPath(ctx);
+                        for (Channel channel : channels) {
+                        pathOn.put(channel, client.login);
+                        }
+                        //setCurrentPath(ctx);
                     }
                 }
             }
@@ -85,7 +100,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    public void setCurrentPath(ChannelHandlerContext ctx) {
+    public void setCurrentPath(ChannelId ctx) {
         currentPath = "server_" + pathOn.get(ctx) + "_storage/";
     }
 }
