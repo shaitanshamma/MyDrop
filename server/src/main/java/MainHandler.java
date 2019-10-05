@@ -13,16 +13,21 @@ import java.util.*;
 
 public class MainHandler extends ChannelInboundHandlerAdapter {
 
+    public MainHandler(String login) {
+        this.login = login;
+    }
+
+    String login;
     List<String> serfilesList = new ArrayList<>();
     List<String> path = new ArrayList<>();
-    static String currentPath;
+    String currentPath;
     Map<Channel, String> pathOn = new HashMap<>();
     final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Client connected...");
+        System.out.println("Client connected..." + login);
         channels.add(ctx.channel());
         for (Channel channel : channels) {
             System.out.println(channel.id());
@@ -31,7 +36,9 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println(ctx.channel().id());
+        currentPath = "server_" + login + "_storage/";
+        channels.add(ctx.channel());
+        System.out.println(ctx.channel().id() +"____" +  login);
         try {
             if (msg == null) {
                 return;
@@ -51,9 +58,10 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                     Files.list(Paths.get(currentPath)).map(p -> p.getFileName().toString()).forEach(o -> serfilesList.add(o));
                     ctx.writeAndFlush(new FileList(serfilesList));
                 } else if (fr.getFilename().equals("list")) {
-                    for (Channel channel : channels) {
-                        setCurrentPath(channel.id());
-                    }
+//                    for (Channel channel : channels) {
+//                        Server.pathOn.put(channel.toString(),login);
+//                        setCurrentPath(Server.pathOn.get(channel));
+//                    }
                     //setCurrentPath(ctx);
                    // System.out.println(pathOn.get(ctx.channel()));
                     serfilesList.clear();
@@ -66,18 +74,19 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 if (!Files.exists(Paths.get(currentPath + fm.getFilename()))) {
                     Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
                 }
-            } if (msg instanceof ClientConnection) {
-                ClientConnection cl = (ClientConnection) msg;
-                for (Client client : Server.clientList) {
-                    if (cl.getLogin().equals(client.login)) {
-                        ctx.writeAndFlush(new Approve("ok"));
-                        for (Channel channel : channels) {
-                        pathOn.put(channel, client.login);
-                        }
-                        //setCurrentPath(ctx);
-                    }
-                }
             }
+//            if (msg instanceof ClientConnection) {
+//                ClientConnection cl = (ClientConnection) msg;
+//                for (Client client : Server.clientList) {
+//                    if (cl.getLogin().equals(client.login)) {
+//                        ctx.writeAndFlush(new Approve("ok"));
+//                        for (Channel channel : channels) {
+//                        pathOn.put(channel, client.login);
+//                        }
+//                        //setCurrentPath(ctx);
+//                    }
+//                }
+//            }
         } finally {
             ReferenceCountUtil.release(msg);
         }
@@ -100,7 +109,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    public void setCurrentPath(ChannelId ctx) {
-        currentPath = "server_" + pathOn.get(ctx) + "_storage/";
+    public void setCurrentPath(String login) {
+        currentPath = "server_" + login + "_storage/";
     }
 }

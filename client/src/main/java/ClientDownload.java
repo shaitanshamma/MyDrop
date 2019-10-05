@@ -12,7 +12,7 @@ public class ClientDownload extends ChannelInboundHandlerAdapter {
 
     CloudWindowController controller;
 
-    LogOnWindowController logOnWindowController;
+   LogOnWindowController logOnWindowController;
 
 
     public ClientDownload(CloudWindowController controller, LogOnWindowController logOnWindowController) {
@@ -30,14 +30,14 @@ public class ClientDownload extends ChannelInboundHandlerAdapter {
                 FileMessage fr = (FileMessage) msg;
                 Files.write(Paths.get("client_storage/" + fr.getFilename()), fr.getData());
             } else if (msg instanceof FileList) {
-                if(Platform.isFxApplicationThread()){
-                controller.serfilesList.getItems().clear();
-                FileList fl = (FileList) msg;
-                for (String s : fl.getSerfilesList()) {
-                    controller.serfilesList.getItems().add(s);
-                }
-                }else {
-                    Platform.runLater(()->{
+                if (Platform.isFxApplicationThread()) {
+                    controller.serfilesList.getItems().clear();
+                    FileList fl = (FileList) msg;
+                    for (String s : fl.getSerfilesList()) {
+                        controller.serfilesList.getItems().add(s);
+                    }
+                } else {
+                    Platform.runLater(() -> {
                         controller.serfilesList.getItems().clear();
                         FileList fl = (FileList) msg;
                         for (String s : fl.getSerfilesList()) {
@@ -45,6 +45,7 @@ public class ClientDownload extends ChannelInboundHandlerAdapter {
                         }
                     });
                 }
+
             } else if (msg instanceof Approve) {
                 Approve ok = (Approve) msg;
                 if (ok.isAuthorizated.equals("ok")) {

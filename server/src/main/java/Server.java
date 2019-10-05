@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Server {
-   static Map<Client,String> pathOn = new HashMap<>();
+   static Map<String,String> pathOn = new HashMap<>();
    static List<Client> clientList = new ArrayList<>();
 
     public void run() throws Exception {
@@ -31,7 +31,7 @@ public class Server {
                             socketChannel.pipeline().addLast(
                                     new ObjectDecoder(50 * 1024 * 1024, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new MainHandler()
+                                    new AuthHandler()
                             );
                         }
                     })
@@ -50,9 +50,9 @@ public class Server {
         clientList.add(new Client("1", "1"));
         clientList.add(new Client("2", "2"));
         clientList.add(new Client("3", "3"));
-        pathOn.put(new Client("1", "1"), "server_" + 1 + "_storage/");
-        pathOn.put(new Client("2", "2"), "server_" + 2 + "_storage/");
-        pathOn.put(new Client("3", "3"), "server_" + 3 + "_storage/");
+//        pathOn.put(new Client("1", "1"), "server_" + 1 + "_storage/");
+//        pathOn.put(new Client("2", "2"), "server_" + 2 + "_storage/");
+//        pathOn.put(new Client("3", "3"), "server_" + 3 + "_storage/");
 
         new Server().run();
     }
