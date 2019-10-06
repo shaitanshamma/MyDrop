@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class CloudWindowController implements Initializable {
@@ -100,7 +101,7 @@ public class CloudWindowController implements Initializable {
 
     public void refreshServerFilesList() {
         if (Platform.isFxApplicationThread()) {
-             serfilesList.getItems().clear();
+            serfilesList.getItems().clear();
             NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "update"));
         } else {
             Platform.runLater(() -> {
@@ -154,20 +155,31 @@ public class CloudWindowController implements Initializable {
             });
         }
     }
+    public void refresh(List<String> list) {
+        if (Platform.isFxApplicationThread()) {
+            serfilesList.getItems().clear();
+            serfilesList.getItems().addAll(list);
+        } else {
+            Platform.runLater(() -> {
+                serfilesList.getItems().clear();
+                serfilesList.getItems().addAll(list);
+            });
+        }
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    NettyNetwork.getInstance().start(CloudWindowController.this, LogOnWindowController.class.newInstance());
-                } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        selection();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    NettyNetwork.getInstance().start(CloudWindowController.this, LogOnWindowController.class.newInstance());
+//                } catch (InstantiationException | IllegalAccessException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+//        selection();zz
     }
 
 }

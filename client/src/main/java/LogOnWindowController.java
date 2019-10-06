@@ -34,7 +34,7 @@ public class LogOnWindowController implements Initializable {
     Button Button;
 
     @FXML
-    public void connect(ActionEvent actionEvent) throws IOException {
+    public void connect() throws IOException {
 
         if (Platform.isFxApplicationThread()) {
             NettyNetwork.currentChannel.writeAndFlush(new ClientConnection(userTextField.getText(), pwBox.getText()));
@@ -49,11 +49,9 @@ public class LogOnWindowController implements Initializable {
             Stage stage = (Stage) Button.getScene().getWindow();
             stage.close();
             FXMLLoader Loader = new FXMLLoader(getClass().getResource("/CloudWindow.fxml"));
-//            AnchorPane pane = FXMLLoader.load(getClass().getResource("/CloudWindow.fxml"));
             Parent root;
             Stage primaryStage = new Stage();
             root = Loader.load();
-//            AnchorPane.getChildren().setAll(pane);
             primaryStage.setTitle("Box Client");
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);

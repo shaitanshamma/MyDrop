@@ -7,6 +7,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -28,10 +29,10 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("Client connected..." + login);
-        channels.add(ctx.channel());
-        for (Channel channel : channels) {
-            System.out.println(channel.id());
-        }
+  //      channels.add(ctx.channel());
+//        for (Channel channel : channels) {
+//            System.out.println(channel.id());
+//        }
     }
 
     @Override
@@ -87,9 +88,12 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
 //                    }
 //                }
 //            }
-        } finally {
-            ReferenceCountUtil.release(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+//        finally {
+//            ReferenceCountUtil.release(msg);
+//        }
     }
 
     @Override

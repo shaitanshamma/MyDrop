@@ -1,6 +1,7 @@
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelPipeline;
 import io.netty.util.ReferenceCountUtil;
 
 import java.nio.file.Files;
@@ -24,9 +25,9 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
                 ClientConnection cl = (ClientConnection) msg;
                 for (Client client : Server.clientList) {
                     if (cl.getLogin().equals(client.login)) {
-                        ctx.writeAndFlush(new Approve("ok"));
-                        ctx.pipeline().addLast(new MainHandler(client.login));
                         ctx.pipeline().remove(this);
+                        ctx.pipeline().addLast(new MainHandler(client.login));
+                        ctx.writeAndFlush(new Approve("ok"));
                     }
                 }
             }

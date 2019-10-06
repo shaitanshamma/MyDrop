@@ -7,18 +7,18 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-public class ClientDownload extends ChannelInboundHandlerAdapter {
+public class ClientHandler extends ChannelInboundHandlerAdapter {
 
 
-    CloudWindowController controller;
+   CloudWindowController controller;
 
    LogOnWindowController logOnWindowController;
 
-
-    public ClientDownload(CloudWindowController controller, LogOnWindowController logOnWindowController) {
-        this.logOnWindowController = logOnWindowController;
+    public ClientHandler(CloudWindowController controller, LogOnWindowController logOnWindowController) {
         this.controller = controller;
+        this.logOnWindowController = logOnWindowController;
     }
+
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -31,18 +31,21 @@ public class ClientDownload extends ChannelInboundHandlerAdapter {
                 Files.write(Paths.get("client_storage/" + fr.getFilename()), fr.getData());
             } else if (msg instanceof FileList) {
                 if (Platform.isFxApplicationThread()) {
-                    controller.serfilesList.getItems().clear();
                     FileList fl = (FileList) msg;
-                    for (String s : fl.getSerfilesList()) {
-                        controller.serfilesList.getItems().add(s);
-                    }
+                    controller.refresh(fl.getSerfilesList());
+//                    for (String s : fl.getSerfilesList()) {
+//                        controller.serfilesList.getItems().add(s);
+//                    }
                 } else {
                     Platform.runLater(() -> {
-                        controller.serfilesList.getItems().clear();
                         FileList fl = (FileList) msg;
-                        for (String s : fl.getSerfilesList()) {
-                            controller.serfilesList.getItems().add(s);
-                        }
+                        controller.refresh(fl.getSerfilesList());
+//                        controller.
+//                                serfilesList.getItems().clear();
+//                        for (String s : fl.getSerfilesList()) {
+//                            controller.
+//                                    serfilesList.getItems().add(s);
+//                        }
                     });
                 }
 
