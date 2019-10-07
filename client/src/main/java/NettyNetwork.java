@@ -39,7 +39,7 @@ public class NettyNetwork {
             Bootstrap clientBootstrap = new Bootstrap();
             clientBootstrap.group(group);
             clientBootstrap.channel(NioSocketChannel.class);
-            clientBootstrap.remoteAddress(new InetSocketAddress("localhost", 8189));
+            clientBootstrap.remoteAddress(new InetSocketAddress("localhost", 8175));
             clientBootstrap.handler(new ChannelInitializer<SocketChannel>() {
                 protected void initChannel(SocketChannel socketChannel) throws Exception {
                     socketChannel.pipeline().addLast(new ObjectDecoder(50 * 1024 * 1024, ClassResolvers.cacheDisabled(null)),

@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class AuthHandler extends ChannelInboundHandlerAdapter {
-    String login;
+
 
     public AuthHandler() {
 

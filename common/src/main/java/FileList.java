@@ -2,13 +2,14 @@ import java.util.List;
 
 
 public class FileList extends AbstractMessage {
-    List<String> serfilesList;
 
-    public FileList(List<String> serfilesList) {
-        this.serfilesList = serfilesList;
+    List<String> serverFileList;
+
+    public FileList(List<String> fileList) {
+        this.serverFileList = fileList;
     }
 
-   public List<String> getSerfilesList() {
-        return serfilesList;
+    public List<String> getServerFileList() {
+        return serverFileList;
     }
 }
