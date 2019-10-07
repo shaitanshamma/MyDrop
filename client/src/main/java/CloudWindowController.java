@@ -12,10 +12,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class CloudWindowController implements Initializable {
+
+//    ClientHandler clientHandler;
+//    public CloudWindowController (){
+//        this.clientHandler = new ClientHandler((this),new LogOnWindowController());
+//    }
     @FXML
     TextField tfFileName;
 
@@ -26,6 +32,8 @@ public class CloudWindowController implements Initializable {
     ListView<String> serfilesList;
 
     String fileName;
+
+    static List<String> server = new ArrayList<>();
 
     boolean isOk;
 
@@ -155,32 +163,23 @@ public class CloudWindowController implements Initializable {
             });
         }
     }
-    public void refresh(List<String> list) {
-        if (Platform.isFxApplicationThread()) {
-            serfilesList.getItems().clear();
-            serfilesList.getItems().addAll(list);
-        } else {
-            Platform.runLater(() -> {
-                serfilesList.getItems().clear();
-                serfilesList.getItems().addAll(list);
-            });
-        }
-    }
+//    public void refresh(List<String> list) {
+//        if (Platform.isFxApplicationThread()) {
+//            serfilesList.getItems().clear();
+//            serfilesList.getItems().addAll(list);
+//        } else {
+//            Platform.runLater(() -> {
+//                serfilesList.getItems().clear();
+//                serfilesList.getItems().addAll(list);
+//            });
+//        }
+//    }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    NettyNetwork.getInstance().start(CloudWindowController.this, LogOnWindowController.class.newInstance());
-//                } catch (InstantiationException | IllegalAccessException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//        selection();zz
-    }
 
+    public void initialize(URL location, ResourceBundle resources) {
+        serfilesList.getItems().addAll(server);
+        refreshList();
+    }
 }
 

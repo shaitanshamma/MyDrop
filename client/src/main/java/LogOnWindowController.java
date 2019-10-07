@@ -44,35 +44,36 @@ public class LogOnWindowController implements Initializable {
                     }
             );
         }
-
-        if (!isOk.getText().isEmpty()) {
-            Stage stage = (Stage) Button.getScene().getWindow();
-            stage.close();
-            FXMLLoader Loader = new FXMLLoader(getClass().getResource("/CloudWindow.fxml"));
-            Parent root;
-            Stage primaryStage = new Stage();
-            root = Loader.load();
-            primaryStage.setTitle("Box Client");
-            Scene scene = new Scene(root);
-            primaryStage.setScene(scene);
-            primaryStage.show();
-
-            System.out.println("sdsdsd");
-        }
     }
 
+    public void changeWindow() throws IOException {
+        Stage stage = (Stage) Button.getScene().getWindow();
+        stage.close();
+        FXMLLoader Loader = new FXMLLoader(getClass().getResource("/CloudWindow.fxml"));
+        Parent root;
+        Stage primaryStage = new Stage();
+        root = Loader.load();
+        primaryStage.setTitle("Box Client");
+        Scene scene = new Scene(root);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        System.out.println("sdsdsd");
+    }
+
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
-//      //  LogOnWindowController controller = new LogOnWindowController();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     NettyNetwork.getInstance().start(CloudWindowController.class.newInstance(), LogOnWindowController.this);
-                } catch (InstantiationException | IllegalAccessException e) {
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
-
     }
 }

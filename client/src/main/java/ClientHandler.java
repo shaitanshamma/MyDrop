@@ -3,6 +3,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import javafx.application.Platform;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -10,9 +11,9 @@ import java.nio.file.Paths;
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
 
-   CloudWindowController controller;
+    CloudWindowController controller;
 
-   LogOnWindowController logOnWindowController;
+    LogOnWindowController logOnWindowController;
 
     public ClientHandler(CloudWindowController controller, LogOnWindowController logOnWindowController) {
         this.controller = controller;
@@ -32,34 +33,39 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             } else if (msg instanceof FileList) {
                 if (Platform.isFxApplicationThread()) {
                     FileList fl = (FileList) msg;
-                    controller.refresh(fl.getSerfilesList());
-//                    for (String s : fl.getSerfilesList()) {
-//                        controller.serfilesList.getItems().add(s);
-//                    }
+                    //                   controller.refresh(fl.getSerfilesList());
+                    CloudWindowController.server.addAll(fl.serfilesList);
+                    for (String s : fl.getSerfilesList()) {
+                        CloudWindowController.server.add(s);
+                        // controller.serfilesList.getItems().add(s);
+                    }
                 } else {
                     Platform.runLater(() -> {
                         FileList fl = (FileList) msg;
-                        controller.refresh(fl.getSerfilesList());
+                        // controller.refresh(fl.getSerfilesList());
 //                        controller.
 //                                serfilesList.getItems().clear();
-//                        for (String s : fl.getSerfilesList()) {
-//                            controller.
-//                                    serfilesList.getItems().add(s);
-//                        }
+                        CloudWindowController.server.addAll(fl.serfilesList);
+                        for (String s : fl.getSerfilesList()) {
+                            // serfilesList.getItems().add(s);
+                        }
                     });
                 }
 
             } else if (msg instanceof Approve) {
                 Approve ok = (Approve) msg;
                 if (ok.isAuthorizated.equals("ok")) {
-                    if(Platform.isFxApplicationThread()){
-
-                    logOnWindowController.isOk.setText("ok");
-                    }else {
-                        Platform.runLater(()->{
-                    logOnWindowController.isOk.setText("ok");
-
+                    if (Platform.isFxApplicationThread()) {
+                        logOnWindowController.changeWindow();
+                    } else {
+                        Platform.runLater(() -> {
+                            try {
+                                logOnWindowController.changeWindow();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         });
+
                     }
                 }
             }
