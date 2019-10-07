@@ -1,6 +1,8 @@
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,10 +20,6 @@ import java.util.ResourceBundle;
 
 public class CloudWindowController implements Initializable {
 
-//    ClientHandler clientHandler;
-//    public CloudWindowController (){
-//        this.clientHandler = new ClientHandler((this),new LogOnWindowController());
-//    }
     @FXML
     TextField tfFileName;
 
@@ -29,13 +27,9 @@ public class CloudWindowController implements Initializable {
     ListView<String> filesList;
 
     @FXML
-    ListView<String> serfilesList;
+    ListView<String> serverFileList;
 
     String fileName;
-
-    static List<String> server = new ArrayList<>();
-
-    boolean isOk;
 
 
     public void setFileName(String fileName) {
@@ -52,7 +46,7 @@ public class CloudWindowController implements Initializable {
     public void selection() {
         fileName = null;
         MultipleSelectionModel<String> langsSelectionModel = filesList.getSelectionModel();
-        MultipleSelectionModel<String> langsSelectionModel2 = serfilesList.getSelectionModel();
+        MultipleSelectionModel<String> langsSelectionModel2 = serverFileList.getSelectionModel();
         langsSelectionModel.selectedItemProperty().addListener(new ChangeListener<String>() {
             String str = " ";
 
@@ -109,11 +103,11 @@ public class CloudWindowController implements Initializable {
 
     public void refreshServerFilesList() {
         if (Platform.isFxApplicationThread()) {
-            serfilesList.getItems().clear();
+           // serverFileList.getItems().clear();
             NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "update"));
         } else {
             Platform.runLater(() -> {
-                serfilesList.getItems().clear();
+            //    serverFileList.getItems().clear();
                 NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "update"));
 
             });
@@ -163,23 +157,23 @@ public class CloudWindowController implements Initializable {
             });
         }
     }
-//    public void refresh(List<String> list) {
-//        if (Platform.isFxApplicationThread()) {
-//            serfilesList.getItems().clear();
-//            serfilesList.getItems().addAll(list);
-//        } else {
-//            Platform.runLater(() -> {
-//                serfilesList.getItems().clear();
-//                serfilesList.getItems().addAll(list);
-//            });
-//        }
-//    }
+    public void refresh(List<String> list) {
+        if (Platform.isFxApplicationThread()) {
+            serverFileList.getItems().clear();
+            serverFileList.getItems().addAll(list);
+        } else {
+            Platform.runLater(() -> {
+                serverFileList.getItems().clear();
+                serverFileList.getItems().addAll(list);
+            });
+        }
+    }
 
+        final ObservableList<String> listItems = FXCollections.observableArrayList();
     @Override
-
     public void initialize(URL location, ResourceBundle resources) {
-        serfilesList.getItems().addAll(server);
         refreshList();
+        serverFileList.setItems(listItems);
     }
 }
 

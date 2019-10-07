@@ -20,7 +20,7 @@
 
     </VBox>
     <VBox>
-        <ListView fx:id="serfilesList" VBox.Vgrow="ALWAYS" />
+        <ListView fx:id="serverFileList" VBox.Vgrow="ALWAYS" />
         <HBox>
             <Button onAction="#pressDownKey" text="Download" />
             <Button onAction="#pressDellatServerButton" text="Удалить" />

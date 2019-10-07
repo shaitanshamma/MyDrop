@@ -6,6 +6,8 @@ import javafx.application.Platform;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
@@ -34,21 +36,25 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
                 if (Platform.isFxApplicationThread()) {
                     FileList fl = (FileList) msg;
                     //                   controller.refresh(fl.getSerfilesList());
-                    CloudWindowController.server.addAll(fl.serfilesList);
-                    for (String s : fl.getSerfilesList()) {
-                        CloudWindowController.server.add(s);
-                        // controller.serfilesList.getItems().add(s);
-                    }
+                   // server.addAll(fl.serfilesList);
+//                        controller.listItems.addAll(fl.serfilesList);
+//                    for (String s : fl.getSerfilesList()) {
+//                      //  server.add(s);
+//                        // controller.serverFileList.getItems().add(s);
+                    controller.refresh(fl.getSerfilesList());
+//                    }
                 } else {
                     Platform.runLater(() -> {
                         FileList fl = (FileList) msg;
                         // controller.refresh(fl.getSerfilesList());
 //                        controller.
-//                                serfilesList.getItems().clear();
-                        CloudWindowController.server.addAll(fl.serfilesList);
-                        for (String s : fl.getSerfilesList()) {
-                            // serfilesList.getItems().add(s);
-                        }
+//                                serverFileList.getItems().clear();
+                     //   controller.listItems.addAll(fl.serfilesList);
+                    //    server.addAll(fl.serfilesList);
+//                        for (String s : fl.getSerfilesList()) {
+//                            // serverFileList.getItems().add(s);
+//                        }
+                        controller.refresh(fl.getSerfilesList());
                     });
                 }
 
