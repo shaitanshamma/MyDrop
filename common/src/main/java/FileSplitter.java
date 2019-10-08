@@ -42,9 +42,6 @@ public class FileSplitter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        for (; count > 1; count--) {
-            Files.delete(Paths.get(tempPath + (count - 1) + ".sp"));
-        }
     }
 
     public void split(String FilePath, long splitlen) throws IOException {
@@ -73,11 +70,12 @@ public class FileSplitter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+       // count = 1;
     }
 
-    public void removeTemp(String tempPath) throws IOException {
-        for (; count > 1; count--) {
-            Files.delete(Paths.get(tempPath + (count - 1) + ".sp"));
+    public void removeTemp(String tempPath, int part) throws IOException {
+        for (; part >= 1; part--) {
+            Files.delete(Paths.get(tempPath + part + ".sp"));
         }
     }
     public static void main(String[] args) throws Exception {

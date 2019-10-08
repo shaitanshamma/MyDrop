@@ -137,12 +137,14 @@ public class CloudWindowController implements Initializable {
         if (file.length() < MAX_OBJC_SIZE) {
             fileSplitter.split(currentPath, 20);
             int count = fileSplitter.getCount() - 1;
+            int part = count+1;
+            int part2 = count;
 
-            for (; count >= 1; count--) {
+            for (; part > 1; part--) {
 
                 if (Platform.isFxApplicationThread()) {
                     try {
-                        NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get(currentPath + count + ".sp"), count));
+                        NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get(currentPath + (part-1) + ".sp"), part2,tfFileName.getText()));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -162,7 +164,7 @@ public class CloudWindowController implements Initializable {
 //                    });
 //                }
             }
-            fileSplitter.removeTemp(currentPath);
+            fileSplitter.removeTemp(currentPath, part2);
             //refreshLocalFilesList();
         }
     }

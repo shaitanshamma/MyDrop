@@ -17,6 +17,15 @@ import java.util.Map;
 
 public class Server {
 
+    public Server(FileSplitter fileSplitter) {
+        this.fileSplitter = fileSplitter;
+    }
+
+    public static FileSplitter getFileSplitter() {
+        return fileSplitter;
+    }
+
+   static FileSplitter fileSplitter;
     static List<Client> clientList = new ArrayList<>();
     final int MAX_OBJC_SIZE = 500;
 
@@ -51,6 +60,7 @@ public class Server {
         clientList.add(new Client("1", "1"));
         clientList.add(new Client("2", "2"));
         clientList.add(new Client("3", "3"));
-        new Server().run();
+        new Server(new FileSplitter()).run();
+
     }
 }

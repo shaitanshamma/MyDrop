@@ -16,7 +16,9 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
     public MainHandler(String login) {
         this.login = login;
     }
+    int part=1;
 
+    FileSplitter fileSplitter = Server.getFileSplitter();
     String login;
     List<String> serverFileList = new ArrayList<>();
     List<String> path = new ArrayList<>();
@@ -47,7 +49,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 FileRequest fr = (FileRequest) msg;
                 if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("down")) {
 
-                    FileMessage fm = new FileMessage(Paths.get(currentPath+ fr.getFilename()),0);
+                    FileMessage fm = new FileMessage(Paths.get(currentPath + fr.getFilename()), 0, fr.getFilename());
                     System.out.println(Arrays.toString(fm.getData()));
                     ctx.writeAndFlush(fm);
                 } else if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("delete")) {
@@ -63,11 +65,19 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 }
             } else if (msg instanceof FileMessage) {
                 FileMessage fm = (FileMessage) msg;
-                if(((FileMessage) msg).part!=0)
-                if (!Files.exists(Paths.get(currentPath + fm.getFilename()))) {
+                if (fm.part > 1) {
+                    if (!Files.exists(Paths.get(currentPath + fm.getFilename()))) {
+                        Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
+                    part++;
+                    }
+                } else if (fm.part == 1) {
                     Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
+                    fileSplitter.join(currentPath + fm.fileFullName, currentPath + fm.fileFullName);
+                    part++;
+                    fileSplitter.removeTemp(currentPath + fm.fileFullName, part);
                 }
             }
+
 
         } catch (IOException e) {
             e.printStackTrace();
