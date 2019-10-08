@@ -48,7 +48,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
 
                 if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("down")) {
 
-                    FileMessage fm = new FileMessage(Paths.get(path + fr.getFilename()));
+                    FileMessage fm = new FileMessage(Paths.get(currentPath+ fr.getFilename()));
                     System.out.println(Arrays.toString(fm.getData()));
                     ctx.writeAndFlush(fm);
                 } else if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("delete")) {

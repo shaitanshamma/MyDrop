@@ -37,7 +37,7 @@ public class Server {
                     })
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            ChannelFuture future = b.bind(8175).sync();
+            ChannelFuture future = b.bind(8177).sync();
             future.channel().closeFuture().sync();
         } finally {
             mainGroup.shutdownGracefully();

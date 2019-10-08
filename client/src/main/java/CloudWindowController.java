@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -44,7 +43,7 @@ public class CloudWindowController implements Initializable {
     }
 
     public void selection() {
-        fileName = null;
+        //fileName = "";
         MultipleSelectionModel<String> langsSelectionModel = filesList.getSelectionModel();
         MultipleSelectionModel<String> langsSelectionModel2 = serverFileList.getSelectionModel();
         langsSelectionModel.selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -74,9 +73,9 @@ public class CloudWindowController implements Initializable {
 
     public void pressDellButton(ActionEvent actionEvent) throws IOException {
         if (tfFileName.getLength() > 0) {
-            Files.delete(Paths.get("client_storage\\" + tfFileName.getText()));
-            tfFileName.clear();
+            Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
             refreshLocalFilesList();
+            tfFileName.clear();
         }
     }
 
@@ -85,7 +84,7 @@ public class CloudWindowController implements Initializable {
         if (Platform.isFxApplicationThread()) {
             try {
                 filesList.getItems().clear();
-                Files.list(Paths.get("client_storage")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
+                Files.list(Paths.get("client_storage/")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -93,7 +92,7 @@ public class CloudWindowController implements Initializable {
             Platform.runLater(() -> {
                 try {
                     filesList.getItems().clear();
-                    Files.list(Paths.get("client_storage")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
+                    Files.list(Paths.get("client_storage/")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -103,11 +102,9 @@ public class CloudWindowController implements Initializable {
 
     public void refreshServerFilesList() {
         if (Platform.isFxApplicationThread()) {
-           // serverFileList.getItems().clear();
             NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "update"));
         } else {
             Platform.runLater(() -> {
-            //    serverFileList.getItems().clear();
                 NettyNetwork.currentChannel.writeAndFlush(new FileRequest("list", "update"));
 
             });
@@ -116,9 +113,20 @@ public class CloudWindowController implements Initializable {
 
 
     public void pressDownKey() {
-        NettyNetwork.currentChannel.writeAndFlush(new FileRequest(tfFileName.getText(), "down"));
-        refreshLocalFilesList();
-        refreshServerFilesList();
+        if (Platform.isFxApplicationThread()) {
+
+            NettyNetwork.currentChannel.writeAndFlush(new FileRequest(tfFileName.getText(), "down"));
+        } else {
+            Platform.runLater(() -> {
+                try {
+                    NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get("client_storage/" + tfFileName.getText())));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                refreshServerFilesList();
+                tfFileName.clear();
+            });
+        }
     }
 
     public void pressUploadKey() {
@@ -143,7 +151,7 @@ public class CloudWindowController implements Initializable {
         }
     }
 
-    public void pressDellatServerButton(ActionEvent actionEvent) {
+    public void pressDellAtServerButton(ActionEvent actionEvent) {
         if (Platform.isFxApplicationThread()) {
             NettyNetwork.currentChannel.writeAndFlush(new FileRequest(tfFileName.getText(), "delete"));
             refreshServerFilesList();
@@ -157,23 +165,26 @@ public class CloudWindowController implements Initializable {
             });
         }
     }
+
     public void refresh(List<String> list) {
+        serverFileList.getItems().clear();
         if (Platform.isFxApplicationThread()) {
-            serverFileList.getItems().clear();
+            System.out.println(serverFileList.getItems());
             serverFileList.getItems().addAll(list);
         } else {
             Platform.runLater(() -> {
-                serverFileList.getItems().clear();
+//                serverFileList.getItems().clear();
                 serverFileList.getItems().addAll(list);
             });
         }
     }
 
-        final ObservableList<String> listItems = FXCollections.observableArrayList();
+    final ObservableList<String> listItems = FXCollections.observableArrayList();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        NettyNetwork.getInstance().startHandler(this);
         refreshList();
-        serverFileList.setItems(listItems);
     }
 }
 

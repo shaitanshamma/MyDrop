@@ -15,9 +15,9 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     LogOnWindowController logOnWindowController;
 
-    public ClientHandler(CloudWindowController controller, LogOnWindowController logOnWindowController) {
+    public ClientHandler(CloudWindowController controller) {
         this.controller = controller;
-        this.logOnWindowController = logOnWindowController;
+
     }
 
 
@@ -30,6 +30,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             if (msg instanceof FileMessage) {
                 FileMessage fr = (FileMessage) msg;
                 Files.write(Paths.get("client_storage/" + fr.getFilename()), fr.getData());
+                controller.refreshList();
             } else if (msg instanceof FileList) {
                 if (Platform.isFxApplicationThread()) {
                     FileList fl = (FileList) msg;

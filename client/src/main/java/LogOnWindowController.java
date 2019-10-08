@@ -67,13 +67,7 @@ public class LogOnWindowController implements Initializable {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    NettyNetwork.getInstance().start(CloudWindowController.class.newInstance(), LogOnWindowController.this);
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+                NettyNetwork.getInstance().start( LogOnWindowController.this);
             }
         }).start();
     }
