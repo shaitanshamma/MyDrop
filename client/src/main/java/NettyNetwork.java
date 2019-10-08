@@ -15,7 +15,7 @@ import java.net.InetSocketAddress;
 public class NettyNetwork
 {
 
-  //  CloudWindowController controller;
+  final int MAX_OBJC_SIZE = 500;
 
   public NettyNetwork()
   {
@@ -50,8 +50,9 @@ public class NettyNetwork
         protected void initChannel(SocketChannel socketChannel) throws Exception
         {
           socketChannel.pipeline()
-                       .addLast(new ObjectDecoder(50 * 1024 * 1024, ClassResolvers.cacheDisabled(null)), new ObjectEncoder(),
-                                new LogOnHandler(logOnWindowController));
+                       .addLast(new ObjectDecoder(MAX_OBJC_SIZE, ClassResolvers.cacheDisabled(null)),
+                               new ObjectEncoder(),
+                               new LogOnHandler(logOnWindowController));
           currentChannel = socketChannel;
 
         }

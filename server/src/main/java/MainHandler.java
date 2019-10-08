@@ -45,10 +45,9 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
             }
             if (msg instanceof FileRequest) {
                 FileRequest fr = (FileRequest) msg;
-
                 if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("down")) {
 
-                    FileMessage fm = new FileMessage(Paths.get(currentPath+ fr.getFilename()));
+                    FileMessage fm = new FileMessage(Paths.get(currentPath+ fr.getFilename()),0);
                     System.out.println(Arrays.toString(fm.getData()));
                     ctx.writeAndFlush(fm);
                 } else if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("delete")) {
@@ -64,6 +63,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 }
             } else if (msg instanceof FileMessage) {
                 FileMessage fm = (FileMessage) msg;
+                if(((FileMessage) msg).part!=0)
                 if (!Files.exists(Paths.get(currentPath + fm.getFilename()))) {
                     Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
                 }
