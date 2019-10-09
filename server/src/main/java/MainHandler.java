@@ -5,7 +5,9 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import javafx.application.Platform;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,7 +18,9 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
     public MainHandler(String login) {
         this.login = login;
     }
-    int part=1;
+
+    final int MAX_OBJC_SIZE = 200;
+    int part = 1;
 
     FileSplitter fileSplitter = Server.getFileSplitter();
     String login;
@@ -47,11 +51,24 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
             }
             if (msg instanceof FileRequest) {
                 FileRequest fr = (FileRequest) msg;
-                if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("down")) {
-
-                    FileMessage fm = new FileMessage(Paths.get(currentPath + fr.getFilename()), 0, fr.getFilename());
+                File file = new File(currentPath+ fr.getFilename());
+                if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("down")
+                && file.length()<MAX_OBJC_SIZE){
+                    FileMessage fm = new FileMessage(Paths.get(currentPath + fr.getFilename()), 0, 0, fr.getFilename());
                     System.out.println(Arrays.toString(fm.getData()));
                     ctx.writeAndFlush(fm);
+                }else if (file.length()>MAX_OBJC_SIZE){
+                    fileSplitter.split(currentPath, 20);
+                    int count = fileSplitter.getCount() - 1;
+                    int part = count + 1;
+                    int parts = count;
+
+                    for (; part > 1; part--) {
+                     ctx.writeAndFlush(new FileMessage(Paths.get(currentPath + (part - 1) + ".sp"), part - 1, parts, fr.getFilename()));
+
+                    }
+                    fileSplitter.removeTemp(currentPath, parts);
+
                 } else if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("delete")) {
 
                     Files.delete(Paths.get(currentPath + fr.getFilename()));
@@ -68,13 +85,13 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 if (fm.part > 1) {
                     if (!Files.exists(Paths.get(currentPath + fm.getFilename()))) {
                         Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
-                    part++;
+                        //part++;
                     }
                 } else if (fm.part == 1) {
                     Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
-                    fileSplitter.join(currentPath + fm.fileFullName, currentPath + fm.fileFullName);
-                    part++;
-                    fileSplitter.removeTemp(currentPath + fm.fileFullName, part);
+                    //part++;
+                    fileSplitter.join(currentPath + fm.fileFullName, currentPath + fm.fileFullName, fm.parts);
+                    fileSplitter.removeTemp(currentPath + fm.fileFullName, fm.parts);
                 }
             }
 

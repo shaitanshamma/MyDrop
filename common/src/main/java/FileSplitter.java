@@ -12,17 +12,19 @@ public class FileSplitter {
     String newFilePath;
     String tempPath;
 
-    public void join(String tempPath, String currentPath) throws IOException {
+    public void join(String tempPath, String currentPath, int parts) throws IOException {
+        //int part =1;
         long leninfile = 0, leng = 0;
-         int data = 0;
+        int data = 0;
         try {
             File filename = new File(tempPath);
             File newFilename = new File(currentPath);
             //RandomAccessFile outfile = new RandomAccessFile(filename,"rw");
 
             OutputStream outfile = new BufferedOutputStream(new FileOutputStream(newFilename));
-            while (true) {
-                filename = new File(tempPath + count + ".sp");
+//            while (true)
+            for (int part = 1; part <= parts; part++) {
+                filename = new File(tempPath + part + ".sp");
                 if (filename.exists()) {
                     //RandomAccessFile infile = new RandomAccessFile(filename,"r");
                     InputStream infile = new BufferedInputStream(new FileInputStream(filename));
@@ -33,7 +35,7 @@ public class FileSplitter {
                     }
                     leng++;
                     infile.close();
-                    count++;
+                    // part++;
                 } else {
                     break;
                 }
@@ -47,7 +49,7 @@ public class FileSplitter {
     public void split(String FilePath, long splitlen) throws IOException {
         long leninfile = 0, leng = 0;
         int data;
-//                count = 1, data;
+        count = 1;
         try {
             File filename = new File(FilePath);
             //RandomAccessFile infile = new RandomAccessFile(filename, "r");
@@ -70,7 +72,7 @@ public class FileSplitter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-       // count = 1;
+        // count = 1;
     }
 
     public void removeTemp(String tempPath, int part) throws IOException {
@@ -78,6 +80,7 @@ public class FileSplitter {
             Files.delete(Paths.get(tempPath + part + ".sp"));
         }
     }
+
     public static void main(String[] args) throws Exception {
 //        RandomAccessFile raf = new RandomAccessFile("client_storage/1.txt", "r");
 //        long numSplits = 10; //from user input, extract it from args

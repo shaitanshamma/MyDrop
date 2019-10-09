@@ -24,7 +24,7 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
             } if (msg instanceof ClientConnection) {
                 ClientConnection cl = (ClientConnection) msg;
                 for (Client client : Server.clientList) {
-                    if (cl.getLogin().equals(client.login)) {
+                    if (cl.getLogin().equals(client.login)&&cl.getPass().equals(client.pass)) {
                         ctx.pipeline().remove(this);
                         ctx.pipeline().addLast(new MainHandler(client.login));
                         ctx.writeAndFlush(new Approve("ok"));

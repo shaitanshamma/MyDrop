@@ -76,15 +76,27 @@ public class CloudWindowController implements Initializable {
 
     public void pressDellButton(ActionEvent actionEvent) throws IOException {
         if (tfFileName.getLength() > 0) {
-            Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
-            refreshLocalFilesList();
-            tfFileName.clear();
+            if (Platform.isFxApplicationThread()) {
+
+                Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
+                refreshLocalFilesList();
+                tfFileName.clear();
+            }else
+                Platform.runLater(()->{
+                    try {
+                        Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    refreshLocalFilesList();
+                    tfFileName.clear();
+                });
         }
     }
 
 
     public void refreshLocalFilesList() {
-                filesList.getItems().clear();
+        filesList.getItems().clear();
         if (Platform.isFxApplicationThread()) {
             try {
                 Files.list(Paths.get("client_storage/")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
@@ -137,35 +149,21 @@ public class CloudWindowController implements Initializable {
         if (file.length() < MAX_OBJC_SIZE) {
             fileSplitter.split(currentPath, 20);
             int count = fileSplitter.getCount() - 1;
-            int part = count+1;
-            int part2 = count;
+            int part = count + 1;
+            int parts = count;
 
             for (; part > 1; part--) {
 
                 if (Platform.isFxApplicationThread()) {
                     try {
-                        NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get(currentPath + (part-1) + ".sp"), part2,tfFileName.getText()));
+                        NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get(currentPath + (part - 1) + ".sp"), part - 1, parts, tfFileName.getText()));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    refreshServerFilesList();
-
-//                    tfFileName.clear();
                 }
-//                else {
-//                    Platform.runLater(() -> {
-//                        try {
-//                            NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get("client_storage/" + tfFileName.getText())));
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                        refreshServerFilesList();
-//                        tfFileName.clear();
-//                    });
-//                }
             }
-            fileSplitter.removeTemp(currentPath, part2);
-            //refreshLocalFilesList();
+            fileSplitter.removeTemp(currentPath, parts);
+            refreshServerFilesList();
         }
     }
 

@@ -6,6 +6,7 @@ public class FileMessage extends AbstractMessage {
     private String filename;
     private byte[] data;
     int part;
+    int parts;
     String fileFullName;
 
     public String getFilename() {
@@ -17,8 +18,9 @@ public class FileMessage extends AbstractMessage {
     }
 
 
-    public FileMessage(Path path, int part, String fileFullName) throws IOException {
+    public FileMessage(Path path, int part, int parts, String fileFullName) throws IOException {
         this.part = part;
+        this.parts = parts;
         filename = path.getFileName().toString();
         data = Files.readAllBytes(path);
         this.fileFullName = fileFullName;
