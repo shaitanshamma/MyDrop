@@ -74,15 +74,15 @@ public class CloudWindowController implements Initializable {
         });
     }
 
-    public void pressDellButton(ActionEvent actionEvent) throws IOException {
+    public void pressDellButton(ActionEvent actionEvent) throws IOException, InterruptedException {
+        Thread.sleep(100);
         if (tfFileName.getLength() > 0) {
             if (Platform.isFxApplicationThread()) {
-
                 Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
                 refreshLocalFilesList();
                 tfFileName.clear();
-            }else
-                Platform.runLater(()->{
+            } else
+                Platform.runLater(() -> {
                     try {
                         Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
                     } catch (IOException e) {
@@ -134,7 +134,6 @@ public class CloudWindowController implements Initializable {
         } else {
             Platform.runLater(() -> {
                 NettyNetwork.currentChannel.writeAndFlush(new FileRequest(tfFileName.getText(), "down"));
-                // NettyNetwork.currentChannel.writeAndFlush(new FileMessage(Paths.get("client_storage/" + tfFileName.getText())));
                 refreshServerFilesList();
                 tfFileName.clear();
             });
@@ -163,8 +162,8 @@ public class CloudWindowController implements Initializable {
                 }
             }
             fileSplitter.removeTemp(currentPath, parts);
-            refreshServerFilesList();
         }
+            refreshServerFilesList();
     }
 
     public void pressDellAtServerButton(ActionEvent actionEvent) {
