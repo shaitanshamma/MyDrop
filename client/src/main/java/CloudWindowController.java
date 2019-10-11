@@ -46,7 +46,6 @@ public class CloudWindowController implements Initializable {
     }
 
     public void selection() {
-        //fileName = "";
         MultipleSelectionModel<String> langsSelectionModel = filesList.getSelectionModel();
         MultipleSelectionModel<String> langsSelectionModel2 = serverFileList.getSelectionModel();
         langsSelectionModel.selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -74,8 +73,7 @@ public class CloudWindowController implements Initializable {
         });
     }
 
-    public void pressDellButton(ActionEvent actionEvent) throws IOException, InterruptedException {
-        Thread.sleep(100);
+    public void pressDellButton(ActionEvent actionEvent) throws IOException {
         if (tfFileName.getLength() > 0) {
             if (Platform.isFxApplicationThread()) {
                 Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
@@ -106,7 +104,7 @@ public class CloudWindowController implements Initializable {
         } else {
             Platform.runLater(() -> {
                 try {
-//                    filesList.getItems().clear();
+                    filesList.getItems().clear();
                     Files.list(Paths.get("client_storage/")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -163,7 +161,7 @@ public class CloudWindowController implements Initializable {
             }
             fileSplitter.removeTemp(currentPath, parts);
         }
-            refreshServerFilesList();
+        refreshServerFilesList();
     }
 
     public void pressDellAtServerButton(ActionEvent actionEvent) {
@@ -193,8 +191,6 @@ public class CloudWindowController implements Initializable {
             });
         }
     }
-
-    final ObservableList<String> listItems = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

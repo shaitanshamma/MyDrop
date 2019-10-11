@@ -19,29 +19,24 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
         this.login = login;
     }
 
-    final int MAX_OBJC_SIZE = 200;
+    private final int MAX_OBJC_SIZE = 200;
     int part = 1;
 
-    FileSplitter fileSplitter = Server.getFileSplitter();
-    String login;
-    List<String> serverFileList = new ArrayList<>();
-    List<String> path = new ArrayList<>();
-    String currentPath;
-    Map<Channel, String> pathOn = new HashMap<>();
+    private FileSplitter fileSplitter = Server.getFileSplitter();
+    private String login;
+    private List<String> serverFileList = new ArrayList<>();
+    private List<String> path = new ArrayList<>();
+    private String currentPath;
     final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         System.out.println("Client connected..." + login);
-        //      channels.add(ctx.channel());
-//        for (Channel channel : channels) {
-//            System.out.println(channel.id());
-//        }
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         currentPath = "server_" + login + "_storage/";
         channels.add(ctx.channel());
         System.out.println(ctx.channel().id() + "____" + login);
@@ -51,20 +46,20 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
             }
             if (msg instanceof FileRequest) {
                 FileRequest fr = (FileRequest) msg;
-                File file = new File(currentPath+ fr.getFilename());
+                File file = new File(currentPath + fr.getFilename());
                 if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("down")
-                && file.length()<MAX_OBJC_SIZE){
+                        && file.length() < MAX_OBJC_SIZE) {
                     FileMessage fm = new FileMessage(Paths.get(currentPath + fr.getFilename()), 0, 0, fr.getFilename());
                     System.out.println(Arrays.toString(fm.getData()));
                     ctx.writeAndFlush(fm);
-                }else if (file.length()>MAX_OBJC_SIZE){
+                } else if (file.length() > MAX_OBJC_SIZE) {
                     fileSplitter.split(currentPath, 20);
                     int count = fileSplitter.getCount() - 1;
                     int part = count + 1;
                     int parts = count;
 
                     for (; part > 1; part--) {
-                     ctx.writeAndFlush(new FileMessage(Paths.get(currentPath + (part - 1) + ".sp"), part - 1, parts, fr.getFilename()));
+                        ctx.writeAndFlush(new FileMessage(Paths.get(currentPath + (part - 1) + ".sp"), part - 1, parts, fr.getFilename()));
 
                     }
                     fileSplitter.removeTemp(currentPath, parts);
@@ -104,13 +99,13 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
 

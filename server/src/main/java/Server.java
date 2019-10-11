@@ -53,7 +53,6 @@ public class Server {
             mainGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-
     }
 
     public static void main(String[] args) throws Exception {
@@ -61,6 +60,5 @@ public class Server {
         clientList.add(new Client("2", "2"));
         clientList.add(new Client("3", "3"));
         new Server(new FileSplitter()).run();
-
     }
 }

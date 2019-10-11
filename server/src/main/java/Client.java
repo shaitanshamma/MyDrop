@@ -1,17 +1,17 @@
 public class Client {
-    String login;
-    String pass;
+    protected String login;
+    protected String password;
 
-    public Client(String login, String pass) {
+    public Client(String login, String password) {
         this.login = login;
-        this.pass = pass;
+        this.password = password;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPass() {
-        return pass;
-    }
+//    public String getLogin() {
+//        return login;
+//    }
+//
+//    public String getPass() {
+//        return password;
+//    }
 }

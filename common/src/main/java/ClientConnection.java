@@ -1,23 +1,18 @@
 public class ClientConnection extends AbstractMessage {
-    String login;
+    private String login;
+    private String password;
 
     public String getLogin() {
         return login;
     }
 
-    public String getPass() {
-        return pass;
+    public String getPassword() {
+        return password;
     }
-
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
-
-    String pass;
 
     public ClientConnection(String login, String pass) {
         this.login = login;
-        this.pass = pass;
+        this.password = pass;
     }
 
 }

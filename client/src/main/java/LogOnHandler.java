@@ -18,26 +18,18 @@ public class LogOnHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof Approve)
-        {
+        if (msg instanceof Approve) {
             Approve ok = (Approve) msg;
-            if (ok.isAuthorizated.equals("ok"))
-            {
-                if (Platform.isFxApplicationThread())
-                {
+            if (ok.isAuthorizated.equals("ok")) {
+                if (Platform.isFxApplicationThread()) {
                     ctx.pipeline().remove(this);
                     logOnWindowController.changeWindow();
-                }
-                else
-                {
+                } else {
                     Platform.runLater(() -> {
-                        try
-                        {
+                        try {
                             ctx.pipeline().remove(this);
                             logOnWindowController.changeWindow();
-                        }
-                        catch (IOException e)
-                        {
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     });

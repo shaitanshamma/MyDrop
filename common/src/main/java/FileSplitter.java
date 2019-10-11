@@ -9,24 +9,18 @@ public class FileSplitter {
     }
 
     int count = 1;
-    String newFilePath;
-    String tempPath;
 
     public void join(String tempPath, String currentPath, int parts) throws IOException {
-        //int part =1;
         long leninfile = 0, leng = 0;
         int data = 0;
         try {
             File filename = new File(tempPath);
             File newFilename = new File(currentPath);
-            //RandomAccessFile outfile = new RandomAccessFile(filename,"rw");
-
             OutputStream outfile = new BufferedOutputStream(new FileOutputStream(newFilename));
 //            while (true)
             for (int part = 1; part <= parts; part++) {
                 filename = new File(tempPath + part + ".sp");
                 if (filename.exists()) {
-                    //RandomAccessFile infile = new RandomAccessFile(filename,"r");
                     InputStream infile = new BufferedInputStream(new FileInputStream(filename));
                     data = infile.read();
                     while (data != -1) {
@@ -52,12 +46,10 @@ public class FileSplitter {
         count = 1;
         try {
             File filename = new File(FilePath);
-            //RandomAccessFile infile = new RandomAccessFile(filename, "r");
             InputStream infile = new BufferedInputStream(new FileInputStream(filename));
             data = infile.read();
             while (data != -1) {
                 filename = new File(FilePath + count + ".sp");
-                //RandomAccessFile outfile = new RandomAccessFile(filename, "rw");
                 OutputStream outfile = new BufferedOutputStream(new FileOutputStream(filename));
                 while (data != -1 && leng < splitlen) {
                     outfile.write(data);

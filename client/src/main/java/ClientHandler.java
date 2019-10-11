@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
-
     CloudWindowController controller;
 
     LogOnWindowController logOnWindowController;
@@ -34,25 +33,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             } else if (msg instanceof FileList) {
                 if (Platform.isFxApplicationThread()) {
                     FileList fl = (FileList) msg;
-                    //                   controller.refresh(fl.getServerFileList());
-                   // server.addAll(fl.serverFileList);
-//                        controller.listItems.addAll(fl.serverFileList);
-//                    for (String s : fl.getServerFileList()) {
-//                      //  server.add(s);
-//                        // controller.serverFileList.getItems().add(s);
                     controller.refresh(fl.getServerFileList());
-//                    }
                 } else {
                     Platform.runLater(() -> {
                         FileList fl = (FileList) msg;
-                        // controller.refresh(fl.getServerFileList());
-//                        controller.
-//                                serverFileList.getItems().clear();
-                     //   controller.listItems.addAll(fl.serverFileList);
-                    //    server.addAll(fl.serverFileList);
-//                        for (String s : fl.getServerFileList()) {
-//                            // serverFileList.getItems().add(s);
-//                        }
                         controller.refresh(fl.getServerFileList());
                     });
                 }
