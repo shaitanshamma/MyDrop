@@ -1,20 +1,15 @@
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TextField;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -49,25 +44,21 @@ public class CloudWindowController implements Initializable {
         MultipleSelectionModel<String> langsSelectionModel2 = serverFileList.getSelectionModel();
         langsSelectionModel.selectedItemProperty().addListener(new ChangeListener<String>() {
             String str = " ";
-
             public void changed(ObservableValue<? extends String> changed, String oldValue, String newValue) {
                 str = newValue;
                 setFileName(str);
                 tfFileName.clear();
                 tfFileName.appendText(str);
                 System.out.println("at client" + fileName);
-
             }
         });
         langsSelectionModel2.selectedItemProperty().addListener(new ChangeListener<String>() {
             String str = " ";
-
             public void changed(ObservableValue<? extends String> changed, String oldValue, String newValue) {
                 str = newValue;
                 setFileName(str);
                 tfFileName.clear();
                 tfFileName.appendText(str);
-                System.out.println("at server " + fileName);
             }
         });
     }
@@ -183,7 +174,6 @@ public class CloudWindowController implements Initializable {
     public void refresh(List<String> list) {
         serverFileList.getItems().clear();
         if (Platform.isFxApplicationThread()) {
-            System.out.println(serverFileList.getItems());
             serverFileList.getItems().addAll(list);
         } else {
             Platform.runLater(() -> serverFileList.getItems().addAll(list));

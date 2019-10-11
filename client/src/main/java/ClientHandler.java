@@ -40,9 +40,9 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
                     });
                 }
 
-            } else if (msg instanceof Approve) {
-                Approve ok = (Approve) msg;
-                if (ok.isAuthorizated.equals("ok")) {
+            } else if (msg instanceof Authorization) {
+                Authorization ok = (Authorization) msg;
+                if (ok.isAuthorized) {
                     if (Platform.isFxApplicationThread()) {
                         logOnWindowController.changeWindow();
                     } else {

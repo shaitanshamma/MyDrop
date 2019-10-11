@@ -1,11 +1,8 @@
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.ReferenceCountUtil;
 import javafx.application.Platform;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class LogOnHandler extends ChannelInboundHandlerAdapter {
 
@@ -18,9 +15,9 @@ public class LogOnHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof Approve) {
-            Approve ok = (Approve) msg;
-            if (ok.isAuthorizated.equals("ok")) {
+        if (msg instanceof Authorization) {
+            Authorization authorization = (Authorization) msg;
+            if (authorization.isAuthorized) {
                 if (Platform.isFxApplicationThread()) {
                     ctx.pipeline().remove(this);
                     logOnWindowController.changeWindow();
