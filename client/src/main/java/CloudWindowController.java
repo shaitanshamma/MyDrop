@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class CloudWindowController implements Initializable {
-    FileSplitter fileSplitter;
+    private FileSplitter fileSplitter;
     @FXML
     TextField tfFileName;
 
@@ -30,11 +30,11 @@ public class CloudWindowController implements Initializable {
     @FXML
     ListView<String> serverFileList;
 
-    String fileName;
+    private String fileName;
 
-    final int MAX_OBJC_SIZE = 500;
+    private final int MAX_OBJC_SIZE = 500;
 
-    public void setFileName(String fileName) {
+    private void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
@@ -42,7 +42,6 @@ public class CloudWindowController implements Initializable {
         selection();
         refreshLocalFilesList();
         refreshServerFilesList();
-
     }
 
     public void selection() {
@@ -73,21 +72,25 @@ public class CloudWindowController implements Initializable {
         });
     }
 
-    public void pressDellButton(ActionEvent actionEvent) throws IOException {
+    public void pressDellButton() {
         if (tfFileName.getLength() > 0) {
             if (Platform.isFxApplicationThread()) {
-                Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
+                try {
+                    Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 refreshLocalFilesList();
                 tfFileName.clear();
             } else
                 Platform.runLater(() -> {
                     try {
                         Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
+                        refreshLocalFilesList();
+                        tfFileName.clear();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    refreshLocalFilesList();
-                    tfFileName.clear();
                 });
         }
     }
@@ -104,7 +107,6 @@ public class CloudWindowController implements Initializable {
         } else {
             Platform.runLater(() -> {
                 try {
-                    filesList.getItems().clear();
                     Files.list(Paths.get("client_storage/")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -125,7 +127,7 @@ public class CloudWindowController implements Initializable {
     }
 
 
-    public void pressDownKey() {
+    public void pressDownloadButton() {
         if (Platform.isFxApplicationThread()) {
 
             NettyNetwork.currentChannel.writeAndFlush(new FileRequest(tfFileName.getText(), "down"));
@@ -138,11 +140,10 @@ public class CloudWindowController implements Initializable {
         }
     }
 
-    public void pressUploadKey() throws IOException {
+    public void pressUploadButton() {
 
         String currentPath = "client_storage/" + tfFileName.getText();
         File file = new File(currentPath);
-
         if (file.length() < MAX_OBJC_SIZE) {
             fileSplitter.split(currentPath, 20);
             int count = fileSplitter.getCount() - 1;
@@ -164,7 +165,7 @@ public class CloudWindowController implements Initializable {
         refreshServerFilesList();
     }
 
-    public void pressDellAtServerButton(ActionEvent actionEvent) {
+    public void pressDellAtServerButton() {
         if (Platform.isFxApplicationThread()) {
             NettyNetwork.currentChannel.writeAndFlush(new FileRequest(tfFileName.getText(), "delete"));
             refreshServerFilesList();
@@ -185,10 +186,7 @@ public class CloudWindowController implements Initializable {
             System.out.println(serverFileList.getItems());
             serverFileList.getItems().addAll(list);
         } else {
-            Platform.runLater(() -> {
-//                serverFileList.getItems().clear();
-                serverFileList.getItems().addAll(list);
-            });
+            Platform.runLater(() -> serverFileList.getItems().addAll(list));
         }
     }
 

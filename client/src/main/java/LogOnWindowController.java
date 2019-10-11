@@ -1,5 +1,4 @@
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -9,19 +8,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LogOnWindowController implements Initializable {
-
 
     @FXML
     TextField userTextField;
@@ -36,14 +29,11 @@ public class LogOnWindowController implements Initializable {
     Button Button;
 
     @FXML
-    public void connect() throws IOException {
-
+    public void connect() {
         if (Platform.isFxApplicationThread()) {
             NettyNetwork.currentChannel.writeAndFlush(new ClientConnection(userTextField.getText(), pwBox.getText()));
         } else {
-            Platform.runLater(() -> {
-                        NettyNetwork.currentChannel.writeAndFlush(new ClientConnection(userTextField.getText(), pwBox.getText()));
-                    }
+            Platform.runLater(() -> NettyNetwork.currentChannel.writeAndFlush(new ClientConnection(userTextField.getText(), pwBox.getText()))
             );
         }
     }
@@ -67,7 +57,7 @@ public class LogOnWindowController implements Initializable {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                NettyNetwork.getInstance().start( LogOnWindowController.this);
+                NettyNetwork.getInstance().start(LogOnWindowController.this);
             }
         }).start();
     }

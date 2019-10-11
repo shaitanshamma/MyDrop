@@ -17,17 +17,18 @@ import java.util.Map;
 
 public class Server {
 
-    public Server(FileSplitter fileSplitter) {
-        this.fileSplitter = fileSplitter;
+    private static FileSplitter fileSplitter;
+    static List<Client> clientList = new ArrayList<>();
+    private final int MAX_OBJC_SIZE = 500;
+
+    private Server(FileSplitter fileSplitter) {
+        Server.fileSplitter = fileSplitter;
     }
 
-    public static FileSplitter getFileSplitter() {
+    static FileSplitter getFileSplitter() {
         return fileSplitter;
     }
 
-   static FileSplitter fileSplitter;
-    static List<Client> clientList = new ArrayList<>();
-    final int MAX_OBJC_SIZE = 500;
 
     public void run() throws Exception {
         EventLoopGroup mainGroup = new NioEventLoopGroup();

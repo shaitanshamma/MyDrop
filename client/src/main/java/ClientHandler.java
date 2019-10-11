@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
-    CloudWindowController controller;
+    private CloudWindowController controller;
 
     LogOnWindowController logOnWindowController;
 
@@ -18,7 +18,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         this.controller = controller;
 
     }
-
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

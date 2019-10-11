@@ -6,12 +6,4 @@ public class Client {
         this.login = login;
         this.password = password;
     }
-
-//    public String getLogin() {
-//        return login;
-//    }
-//
-//    public String getPass() {
-//        return password;
-//    }
 }

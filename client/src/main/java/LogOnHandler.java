@@ -9,9 +9,9 @@ import java.nio.file.Paths;
 
 public class LogOnHandler extends ChannelInboundHandlerAdapter {
 
-    LogOnWindowController logOnWindowController;
+    private LogOnWindowController logOnWindowController;
 
-    public LogOnHandler(LogOnWindowController logOnWindowController) {
+    LogOnHandler(LogOnWindowController logOnWindowController) {
         this.logOnWindowController = logOnWindowController;
 
     }
@@ -33,7 +33,6 @@ public class LogOnHandler extends ChannelInboundHandlerAdapter {
                             e.printStackTrace();
                         }
                     });
-
                 }
             }
         }

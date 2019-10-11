@@ -1,11 +1,9 @@
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import javafx.application.Platform;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,26 +18,14 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
     }
 
     private final int MAX_OBJC_SIZE = 200;
-    int part = 1;
-
     private FileSplitter fileSplitter = Server.getFileSplitter();
     private String login;
     private List<String> serverFileList = new ArrayList<>();
-    private List<String> path = new ArrayList<>();
     private String currentPath;
-    final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) {
-        System.out.println("Client connected..." + login);
-    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         currentPath = "server_" + login + "_storage/";
-        channels.add(ctx.channel());
-        System.out.println(ctx.channel().id() + "____" + login);
         try {
             if (msg == null) {
                 return;
@@ -50,46 +36,18 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("down")
                         && file.length() < MAX_OBJC_SIZE) {
                     FileMessage fm = new FileMessage(Paths.get(currentPath + fr.getFilename()), 0, 0, fr.getFilename());
-                    System.out.println(Arrays.toString(fm.getData()));
                     ctx.writeAndFlush(fm);
                 } else if (file.length() > MAX_OBJC_SIZE) {
-                    fileSplitter.split(currentPath, 20);
-                    int count = fileSplitter.getCount() - 1;
-                    int part = count + 1;
-                    int parts = count;
-
-                    for (; part > 1; part--) {
-                        ctx.writeAndFlush(new FileMessage(Paths.get(currentPath + (part - 1) + ".sp"), part - 1, parts, fr.getFilename()));
-
-                    }
-                    fileSplitter.removeTemp(currentPath, parts);
-
+                    splitFileToDownload(ctx, fr);
                 } else if (Files.exists(Paths.get(currentPath + fr.getFilename())) && fr.getCommand().equals("delete")) {
-
                     Files.delete(Paths.get(currentPath + fr.getFilename()));
-                    serverFileList.clear();
-                    Files.list(Paths.get(currentPath)).map(p -> p.getFileName().toString()).forEach(o -> serverFileList.add(o));
-                    ctx.writeAndFlush(new FileList(serverFileList));
+                    responseServerFiles(ctx);
                 } else if (fr.getFilename().equals("list")) {
-                    serverFileList.clear();
-                    Files.list(Paths.get(currentPath)).map(p -> p.getFileName().toString()).forEach(o -> serverFileList.add(o));
-                    ctx.writeAndFlush(new FileList(serverFileList));
+                    responseServerFiles(ctx);
                 }
             } else if (msg instanceof FileMessage) {
-                FileMessage fm = (FileMessage) msg;
-                if (fm.part > 1) {
-                    if (!Files.exists(Paths.get(currentPath + fm.getFilename()))) {
-                        Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
-                        //part++;
-                    }
-                } else if (fm.part == 1) {
-                    Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
-                    //part++;
-                    fileSplitter.join(currentPath + fm.fileFullName, currentPath + fm.fileFullName, fm.parts);
-                    fileSplitter.removeTemp(currentPath + fm.fileFullName, fm.parts);
-                }
+                receiveUploadFiles((FileMessage) msg);
             }
-
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,24 +56,45 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
-        ctx.close();
+    private void receiveUploadFiles(FileMessage msg) throws IOException {
+        FileMessage fm = msg;
+        if (fm.part > 1) {
+            if (!Files.exists(Paths.get(currentPath + fm.getFilename()))) {
+                Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
+            }
+        } else if (fm.part == 1) {
+            Files.write(Paths.get(currentPath + fm.getFilename()), fm.getData());
+            fileSplitter.join(currentPath + fm.fileFullName, currentPath + fm.fileFullName, fm.parts);
+            fileSplitter.removeTemp(currentPath + fm.fileFullName, fm.parts);
+        }
     }
+
+    private void splitFileToDownload(ChannelHandlerContext ctx, FileRequest fr) throws IOException {
+        fileSplitter.split(currentPath, 20);
+        int count = fileSplitter.getCount() - 1;
+        int part = count + 1;
+        int parts = count;
+        for (; part > 1; part--) {
+            ctx.writeAndFlush(new FileMessage(Paths.get(currentPath + (part - 1) + ".sp"), part - 1, parts, fr.getFilename()));
+        }
+        fileSplitter.removeTemp(currentPath, parts);
+    }
+
+    private void responseServerFiles(ChannelHandlerContext ctx) throws IOException {
+        serverFileList.clear();
+        Files.list(Paths.get(currentPath)).map(p -> p.getFileName().toString()).forEach(o -> serverFileList.add(o));
+        ctx.writeAndFlush(new FileList(serverFileList));
+    }
+
+//    @Override
+//    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+//        cause.printStackTrace();
+//        ctx.close();
+//    }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
-
-    protected void setPath() {
-        for (Client client : Server.clientList) {
-            path.add("server_" + client.login + "_storage/");
-        }
-    }
-
-    public void setCurrentPath(String login) {
-        currentPath = "server_" + login + "_storage/";
-    }
 }
+

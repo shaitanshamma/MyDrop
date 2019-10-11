@@ -14,10 +14,9 @@ import java.net.InetSocketAddress;
 
 public class NettyNetwork {
 
-    final int MAX_OBJC_SIZE = 500;
+    private final int MAX_OBJC_SIZE = 500;
 
     public NettyNetwork() {
-
     }
 
     private static NettyNetwork ourInstance = new NettyNetwork();
@@ -27,10 +26,6 @@ public class NettyNetwork {
     }
 
     public static Channel currentChannel;
-
-    public Channel getCurrentChannel() {
-        return currentChannel;
-    }
 
     public void start(LogOnWindowController logOnWindowController) {
         EventLoopGroup group = new NioEventLoopGroup();
@@ -46,7 +41,6 @@ public class NettyNetwork {
                                     new ObjectEncoder(),
                                     new LogOnHandler(logOnWindowController));
                     currentChannel = socketChannel;
-
                 }
             });
             ChannelFuture channelFuture = clientBootstrap.connect().sync();

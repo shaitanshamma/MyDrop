@@ -10,14 +10,13 @@ public class FileSplitter {
 
     int count = 1;
 
-    public void join(String tempPath, String currentPath, int parts) throws IOException {
-        long leninfile = 0, leng = 0;
-        int data = 0;
+    public void join(String tempPath, String currentPath, int parts) {
+        int data;
         try {
-            File filename = new File(tempPath);
+            File filename;
             File newFilename = new File(currentPath);
             OutputStream outfile = new BufferedOutputStream(new FileOutputStream(newFilename));
-//            while (true)
+
             for (int part = 1; part <= parts; part++) {
                 filename = new File(tempPath + part + ".sp");
                 if (filename.exists()) {
@@ -27,9 +26,7 @@ public class FileSplitter {
                         outfile.write(data);
                         data = infile.read();
                     }
-                    leng++;
                     infile.close();
-                    // part++;
                 } else {
                     break;
                 }
@@ -40,8 +37,8 @@ public class FileSplitter {
         }
     }
 
-    public void split(String FilePath, long splitlen) throws IOException {
-        long leninfile = 0, leng = 0;
+    public void split(String FilePath, long splitLength) {
+        long leng = 0;
         int data;
         count = 1;
         try {
@@ -51,25 +48,28 @@ public class FileSplitter {
             while (data != -1) {
                 filename = new File(FilePath + count + ".sp");
                 OutputStream outfile = new BufferedOutputStream(new FileOutputStream(filename));
-                while (data != -1 && leng < splitlen) {
+                while (data != -1 && leng < splitLength) {
                     outfile.write(data);
                     leng++;
                     data = infile.read();
                 }
-                leninfile += leng;
                 leng = 0;
                 outfile.close();
                 count++;
             }
-                infile.close();
+            infile.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void removeTemp(String tempPath, int part) throws IOException {
+    public void removeTemp(String tempPath, int part) {
         for (; part >= 1; part--) {
-            Files.delete(Paths.get(tempPath + part + ".sp"));
+            try {
+                Files.delete(Paths.get(tempPath + part + ".sp"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

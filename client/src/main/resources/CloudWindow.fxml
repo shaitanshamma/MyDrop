@@ -13,7 +13,7 @@
         <ListView fx:id="filesList" HBox.hgrow="ALWAYS" />
            <TextField fx:id="tfFileName" focusTraversable="false" promptText="Укажите имя файла на сервере, который хотите скачать" />
         <HBox>
-            <Button onAction="#pressUploadKey" text="Upload" />
+            <Button onAction="#pressUploadButton" text="Upload" />
             <Button onAction="#pressDellButton" text="Удалить" />
             <Button onAction="#refreshList" text="Обновить" />
         </HBox>
@@ -22,7 +22,7 @@
     <VBox>
         <ListView fx:id="serverFileList" VBox.Vgrow="ALWAYS" />
         <HBox>
-            <Button onAction="#pressDownKey" text="Download" />
+            <Button onAction="#pressDownloadButton" text="Download" />
             <Button onAction="#pressDellAtServerButton" text="Удалить" />
         </HBox>
     </VBox>
