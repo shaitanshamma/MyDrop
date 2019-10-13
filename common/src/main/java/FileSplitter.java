@@ -4,11 +4,12 @@ import java.nio.file.Paths;
 
 public class FileSplitter {
 
+    int count = 1;
+
     public int getCount() {
         return count;
     }
 
-    int count = 1;
 
     public void join(String tempPath, String currentPath, int parts) {
         int data;

@@ -1,14 +1,16 @@
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import javafx.application.Platform;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-public class ClientHandler extends ChannelInboundHandlerAdapter {
+public class ClientHandler extends ChannelOutboundHandlerAdapter {
 
     private CloudWindowController controller;
 
@@ -21,13 +23,14 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        String currentPath = "client_storage" + File.separator;
         try {
             if (msg == null) {
                 return;
             }
             if (msg instanceof FileMessage) {
                 FileMessage fr = (FileMessage) msg;
-                Files.write(Paths.get("client_storage/" + fr.getFilename()), fr.getData());
+                Files.write(Paths.get(currentPath + fr.getFilename()), fr.getData());
                 controller.refreshList();
             } else if (msg instanceof FileList) {
                 if (Platform.isFxApplicationThread()) {

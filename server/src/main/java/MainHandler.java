@@ -25,7 +25,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        currentPath = "server_" + login + "_storage/";
+        currentPath = "server_" + login + "_storage" + File.separator;
         try {
             if (msg == null) {
                 return;
@@ -85,12 +85,6 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
         Files.list(Paths.get(currentPath)).map(p -> p.getFileName().toString()).forEach(o -> serverFileList.add(o));
         ctx.writeAndFlush(new FileList(serverFileList));
     }
-
-//    @Override
-//    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-//        cause.printStackTrace();
-//        ctx.close();
-//    }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {

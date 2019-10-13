@@ -29,6 +29,8 @@ public class CloudWindowController implements Initializable {
 
     private final int MAX_OBJC_SIZE = 500;
 
+    private String currentClientPath = "client_storage" + File.separator;
+
     private void setFileName(String fileName) {
         this.fileName = fileName;
     }
@@ -67,7 +69,7 @@ public class CloudWindowController implements Initializable {
         if (tfFileName.getLength() > 0) {
             if (Platform.isFxApplicationThread()) {
                 try {
-                    Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
+                    Files.delete(Paths.get(currentClientPath  + tfFileName.getText()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -76,7 +78,7 @@ public class CloudWindowController implements Initializable {
             } else
                 Platform.runLater(() -> {
                     try {
-                        Files.delete(Paths.get("client_storage/" + tfFileName.getText()));
+                        Files.delete(Paths.get(currentClientPath  + tfFileName.getText()));
                         refreshLocalFilesList();
                         tfFileName.clear();
                     } catch (IOException e) {
@@ -91,14 +93,14 @@ public class CloudWindowController implements Initializable {
         filesList.getItems().clear();
         if (Platform.isFxApplicationThread()) {
             try {
-                Files.list(Paths.get("client_storage/")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
+                Files.list(Paths.get(currentClientPath )).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             Platform.runLater(() -> {
                 try {
-                    Files.list(Paths.get("client_storage/")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
+                    Files.list(Paths.get(currentClientPath )).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -133,7 +135,7 @@ public class CloudWindowController implements Initializable {
 
     public void pressUploadButton() {
 
-        String currentPath = "client_storage/" + tfFileName.getText();
+        String currentPath = currentClientPath + tfFileName.getText();
         File file = new File(currentPath);
         if (file.length() < MAX_OBJC_SIZE) {
             fileSplitter.split(currentPath, 20);
