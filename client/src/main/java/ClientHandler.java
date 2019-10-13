@@ -1,10 +1,7 @@
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import javafx.application.Platform;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
