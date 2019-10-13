@@ -1,3 +1,4 @@
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.group.ChannelGroup;
@@ -11,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class MainHandler extends ChannelInboundHandlerAdapter {
+public class MainHandler extends ChannelHandlerAdapter {
 
     public MainHandler(String login) {
         this.login = login;

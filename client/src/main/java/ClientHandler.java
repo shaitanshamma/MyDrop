@@ -1,3 +1,4 @@
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
@@ -10,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-public class ClientHandler extends ChannelOutboundHandlerAdapter {
+public class ClientHandler extends ChannelHandlerAdapter {
 
     private CloudWindowController controller;
 

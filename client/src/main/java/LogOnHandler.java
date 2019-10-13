@@ -1,10 +1,11 @@
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import javafx.application.Platform;
 
 import java.io.IOException;
 
-public class LogOnHandler extends ChannelInboundHandlerAdapter {
+public class LogOnHandler extends ChannelHandlerAdapter {
 
     private LogOnWindowController logOnWindowController;
 
